@@ -4,9 +4,12 @@ import tkinter as tk
 class DrawingApp:
     def __init__(self, root):
         self.root = root
+        # titel
         self.root.title("Simple Drawing App")
 
+        # create canvas
         self.canvas = tk.Canvas(root, width=400, height=400, bg="white")
+        # Canvas expandable
         self.canvas.pack(fill="both", expand=True)
 
         # Bind mouse button events
