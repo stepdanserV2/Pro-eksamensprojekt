@@ -7,7 +7,7 @@ class DrawingApp:
         self.root.title("Simple Drawing App")
 
         self.canvas = tk.Canvas(root, width=400, height=400, bg="white")
-        self.canvas.pack()
+        self.canvas.pack(fill="both", expand=True)
 
         # Bind mouse button motion to the drawing function
         self.canvas.bind("<B1-Motion>", self.draw)
