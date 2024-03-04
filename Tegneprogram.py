@@ -4,7 +4,7 @@ import tkinter as tk
 class DrawingApp:
     def __init__(self, root):
         self.root = root
-        # titel
+        # title
         self.root.title("Simple Drawing App")
 
         # create canvas
@@ -25,6 +25,16 @@ class DrawingApp:
         self.prev_x = None
         self.prev_y = None
 
+        # Add buttons for changing tools
+        self.pencil_button = tk.Button(root, text="Pencil", command=self.use_pencil)
+        self.pencil_button.pack(side=tk.LEFT)
+
+        self.eraser_button = tk.Button(root, text="Eraser", command=self.use_eraser)
+        self.eraser_button.pack(side=tk.LEFT)
+
+        # Set default tool
+        self.current_tool = "pencil"
+
     def start_draw(self, event):
         # Update the starting point and set drawing state to True
         self.start_x = event.x
@@ -36,8 +46,12 @@ class DrawingApp:
             x, y = event.x, event.y
             # If it's not the first point, draw a line from the previous point to the current point
             if self.prev_x is not None and self.prev_y is not None:
-                self.canvas.create_line(
-                    self.prev_x, self.prev_y, x, y, fill="black", width=2)
+                if self.current_tool == "pencil":
+                    self.canvas.create_line(
+                        self.prev_x, self.prev_y, x, y, fill="black", width=2)
+                elif self.current_tool == "eraser":
+                    self.canvas.create_rectangle(
+                        x - 5, y - 5, x + 5, y + 5, fill="white", outline="")
             # Update the previous point
             self.prev_x = x
             self.prev_y = y
@@ -47,6 +61,12 @@ class DrawingApp:
         self.drawing = False
         self.prev_x = None
         self.prev_y = None
+
+    def use_pencil(self):
+        self.current_tool = "pencil"
+
+    def use_eraser(self):
+        self.current_tool = "eraser"
 
 
 if __name__ == "__main__":
