@@ -1,5 +1,5 @@
 import tkinter as tk
-
+#julie er her nu
 
 class DrawingApp:
     def __init__(self, root):
