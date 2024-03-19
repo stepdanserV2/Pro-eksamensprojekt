@@ -46,6 +46,11 @@ class DrawingApp:
         # Set default tool
         self.current_tool = "pencil"
 
+        self.clear_button = tk.Button(root, text="Clear", command=self.clear_sheet)
+        self.clear_button.pack(side=tk.RIGHT)
+
+        self.history = []
+
     def start_draw(self, event):
         # Update the starting point and set drawing state to True
         self.start_x = event.x
@@ -76,6 +81,9 @@ class DrawingApp:
         self.drawing = False
         self.prev_x = None
         self.prev_y = None
+        self.history.append(self.canvas.find_all())
+          
+
 
     def use_pencil(self):
         self.current_tool = "pencil"
@@ -85,6 +93,13 @@ class DrawingApp:
 
     def change_size(self, size):
         self.size = int(size)
+    
+    def clear_sheet(self):
+        if self.history:
+            last_action = self.history.pop()
+            for item in last_action:
+                self.canvas.delete(item)
+
 
 if __name__ == "__main__":
     root = tk.Tk()
