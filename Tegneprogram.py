@@ -1,4 +1,5 @@
 import tkinter as tk
+# julie er her nu
 
 
 class DrawingApp:
@@ -29,10 +30,16 @@ class DrawingApp:
         self.current_segment = []
 
         # Add buttons for changing tools, size, and undo
+        # Add buttons for changing tools
+        self.pencil_button = tk.Button(
+            root, text="Pencil", command=self.use_pencil)
+        # Add buttons for changing tools and size
         self.pencil_button = tk.Button(
             root, text="Pencil", command=self.use_pencil)
         self.pencil_button.pack(side=tk.LEFT)
 
+        self.eraser_button = tk.Button(
+            root, text="Eraser", command=self.use_eraser)
         self.eraser_button = tk.Button(
             root, text="Eraser", command=self.use_eraser)
         self.eraser_button.pack(side=tk.LEFT)
@@ -48,6 +55,12 @@ class DrawingApp:
 
         # Set default tool
         self.current_tool = "pencil"
+
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_sheet)
+        self.clear_button.pack(side=tk.RIGHT)
+
+        self.history = []
 
     def start_draw(self, event):
         # Update the starting point and set drawing state to True
@@ -103,6 +116,12 @@ class DrawingApp:
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
+
+    def clear_sheet(self):
+        if self.history:
+            last_action = self.history.pop()
+            for item in last_action:
+                self.canvas.delete(item)
 
 
 if __name__ == "__main__":
