@@ -29,7 +29,6 @@ class DrawingApp:
         self.segment_history = []
         self.current_segment = []
         
-        
         # Add buttons for changing tools, size and undo
         self.pencil_button = tk.Button(
             root, text="Pencil", command=self.use_pencil)
@@ -78,17 +77,11 @@ class DrawingApp:
                         x - self.size, y - self.size, x + self.size, y + self.size, fill=self.color)
                     # Draw a line from the previous point to the current point
                     line_id = self.canvas.create_line(
-                    line_id = self.canvas.create_line(
                         self.prev_x, self.prev_y, x, y, fill="black", width=self.size * 2)
                     # Store segment info
                     self.current_segment.append(oval_id)
                     self.current_segment.append(line_id)
-                    # Store segment info
-                    self.current_segment.append(oval_id)
-                    self.current_segment.append(line_id)
                 elif self.current_tool == "eraser":
-                    # Erase using the eraser tool
-                    rect_id = self.canvas.create_rectangle(
                     # Erase using the eraser tool
                     rect_id = self.canvas.create_rectangle(
                         x - self.size, y - self.size, x + self.size, y + self.size, fill="white", outline="")
@@ -110,8 +103,6 @@ class DrawingApp:
         self.segment_history.append(tuple(self.current_segment))
         self.current_segment = []
           
-
-
     def use_pencil(self):
         self.current_tool = "pencil"
 
@@ -130,8 +121,6 @@ class DrawingApp:
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
-
-    
         
     
     def undo(self):
@@ -139,7 +128,6 @@ class DrawingApp:
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
-
 
 if __name__ == "__main__":
     root = tk.Tk()
