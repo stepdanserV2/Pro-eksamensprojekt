@@ -4,12 +4,10 @@ from tkinter import colorchooser
 class DrawingApp:
     def __init__(self, root):
         self.root = root
-        # title
         self.root.title("Simple Drawing App")
 
-        # create canvas
+        # Create canvas
         self.canvas = tk.Canvas(root, width=400, height=400, bg="white")
-        # Canvas expandable
         self.canvas.pack(fill="both", expand=True)
 
         # Bind mouse button events
@@ -18,7 +16,7 @@ class DrawingApp:
         self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
 
         # Keep track of the drawing state, the starting point of the current line,
-        # and the previous point, and the size of the tool
+        # the previous point, and the size of the tool
         self.drawing = False
         self.start_x = None
         self.start_y = None
@@ -57,7 +55,8 @@ class DrawingApp:
         # Set default tool
         self.current_tool = "pencil"
 
-        self.clear_button = tk.Button(root, text="Clear", command=self.clear_sheet)
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_sheet)
         self.clear_button.pack(side=tk.RIGHT)
 
         self.history = []
@@ -79,11 +78,17 @@ class DrawingApp:
                         x - self.size, y - self.size, x + self.size, y + self.size, fill=self.color)
                     # Draw a line from the previous point to the current point
                     line_id = self.canvas.create_line(
+                    line_id = self.canvas.create_line(
                         self.prev_x, self.prev_y, x, y, fill="black", width=self.size * 2)
                     # Store segment info
                     self.current_segment.append(oval_id)
                     self.current_segment.append(line_id)
+                    # Store segment info
+                    self.current_segment.append(oval_id)
+                    self.current_segment.append(line_id)
                 elif self.current_tool == "eraser":
+                    # Erase using the eraser tool
+                    rect_id = self.canvas.create_rectangle(
                     # Erase using the eraser tool
                     rect_id = self.canvas.create_rectangle(
                         x - self.size, y - self.size, x + self.size, y + self.size, fill="white", outline="")
