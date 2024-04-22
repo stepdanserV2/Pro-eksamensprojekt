@@ -128,8 +128,15 @@ class DrawingApp:
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
+   
+#ctrl z
+def ctrl_z_handler(e):
+    print("ctrl z", app.undo())
+
+app = None
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = DrawingApp(root)
+    root.bind("<Control-z>", ctrl_z_handler)
     root.mainloop()
