@@ -29,10 +29,16 @@ class DrawingApp:
         self.segment_history = []
         self.current_segment = []
 
+        # tvære variabler
+        self.smearing = False
+        self.smear_size = 10  # Default smear size
+        self.smear_color = "black"  # Default smear color
+
         # Add buttons for changing tools, size, and undo
         # Add buttons for changing tools
         self.pencil_button = tk.Button(
             root, text="Pencil", command=self.use_pencil)
+
         # Add buttons for changing tools and size
         self.pencil_button = tk.Button(
             root, text="Pencil", command=self.use_pencil)
@@ -59,6 +65,10 @@ class DrawingApp:
         self.clear_button = tk.Button(
             root, text="Clear", command=self.clear_sheet)
         self.clear_button.pack(side=tk.RIGHT)
+
+        self.smear_button = tk.Button(
+            root, text="tvære", command=self.start_smear)
+        self.smear_button.pack(side=tk.RIGHT)
 
         self.history = []
 
@@ -122,6 +132,24 @@ class DrawingApp:
             last_action = self.history.pop()
             for item in last_action:
                 self.canvas.delete(item)
+
+    def start_smear(self):
+        # Set the current tool to smear
+        self.current_tool = "smear"
+        # Activate smearing mode
+        self.smearing = True
+
+    def smear(self, event):
+        # knap til tvære
+        self.canvas.bind("<B1-Motion>", self.smear)
+
+        if self.smearing:
+            x, y = event.x, event.y
+            # Create a circular region to smear the existing drawing
+            self.canvas.create_oval(
+                x - self.smear_size, y - self.smear_size, x +
+                self.smear_size, y + self.smear_size,
+                fill=self.smear_color, outline="", stipple="gray50")
 
 
 if __name__ == "__main__":
