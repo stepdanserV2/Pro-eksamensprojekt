@@ -215,12 +215,8 @@ class DrawingApp:
             for item_id in last_segment:
                 self.canvas.delete(item_id)
    
-#ctrl z
-def ctrl_z_handler(e):
-    print("ctrl z", app.undo())
 
-app = None
-
+    
     def clear_sheet(self):
         if self.history:
             last_action = self.history.pop()
@@ -245,6 +241,12 @@ app = None
                 self.smear_size, y + self.smear_size,
                 fill=self.smear_color, outline="", stipple="gray50")
 
+
+#ctrl z
+def ctrl_z_handler(e):
+    print("ctrl z", app.undo())
+
+app = None
 
 if __name__ == "__main__":
     root = tk.Tk()
