@@ -110,13 +110,13 @@ class DrawingApp:
                 elif self.current_tool == "square":
                     # Draw a square
                     square_id = self.canvas.create_rectangle(
-                        self.start_x, self.start_y, x, y, fill=self.color)
+                        self.start_x, self.start_y, x, y, fill=self.color, outline="")
                     # Store segment info
                     self.current_segment.append(square_id)
                 elif self.current_tool == "triangle":
                     # Draw a triangle
                     triangle_id = self.canvas.create_polygon(
-                        self.start_x, self.start_y, x, y, self.start_x - (x - self.start_x), y, fill=self.color)
+                        self.start_x, self.start_y, x, y, self.start_x - (x - self.start_x), y, fill=self.color, outline="")
                     # Store segment info
                     self.current_segment.append(triangle_id)
                 elif self.current_tool == "none":
