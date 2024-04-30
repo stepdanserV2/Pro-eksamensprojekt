@@ -52,9 +52,13 @@ class DrawingApp:
         self.size_button.pack(side=tk.LEFT)
         self.size_button.set(self.size)  # Set default size
 
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_sheet)
+        self.clear_button.pack(side=tk.RIGHT)
+
         self.undo_button = tk.Button(
             root, text="Undo", command=self.undo)
-        self.undo_button.pack(side=tk.LEFT)
+        self.undo_button.pack(side=tk.RIGHT)
 
         self.color_button = tk.Button(
             root, text="Color", command=self.choose_color)
@@ -70,10 +74,6 @@ class DrawingApp:
 
         # Set default tool
         self.current_tool = "pencil"
-
-        self.clear_button = tk.Button(
-            root, text="Clear", command=self.clear_sheet)
-        self.clear_button.pack(side=tk.RIGHT)
 
         self.history = []
 
@@ -198,7 +198,15 @@ class DrawingApp:
             for item_id in last_segment:
                 self.canvas.delete(item_id)
 
+
+#ctrl z
+def ctrl_z_handler(e):
+    print("ctrl z", app.undo())
+
+app = None
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = DrawingApp(root)
+    root.bind("<Control-z>",ctrl_z_handler)
     root.mainloop()
