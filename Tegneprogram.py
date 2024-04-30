@@ -91,10 +91,10 @@ class DrawingApp:
                 if self.current_tool == "pencil":
                     # Draw using the pencil tool
                     oval_id = self.canvas.create_oval(
-                        x - self.size, y - self.size, x + self.size, y + self.size, fill=self.color)
+                        x - self.size, y - self.size, x + self.size, y + self.size, fill=self.color, outline="")
                     # Draw a line from the previous point to the current point
                     line_id = self.canvas.create_line(
-                        self.prev_x, self.prev_y, x, y, fill="black", width=self.size * 2)
+                        self.prev_x, self.prev_y, x, y, fill=self.color, width=self.size * 2)
                     # Store segment info
                     self.current_segment.append(oval_id)
                     self.current_segment.append(line_id)
@@ -104,6 +104,9 @@ class DrawingApp:
                         x - self.size, y - self.size, x + self.size, y + self.size, fill="white", outline="")
                     reline_id = self.canvas.create_line(
                         self.prev_x, self.prev_y, x, y, fill="white", width=self.size * 2)
+                    # Store segment info
+                    self.current_segment.append(rect_id)
+                    self.current_segment.append(reline_id)
                 elif self.current_tool == "square":
                     # Draw a square
                     square_id = self.canvas.create_rectangle(
