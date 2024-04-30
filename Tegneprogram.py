@@ -16,6 +16,8 @@ class DrawingApp:
         self.canvas.bind("<Button-1>", self.start_draw)
         self.canvas.bind("<B1-Motion>", self.draw)
         self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
+        self.canvas.bind("<Button-1>", self.save_starting_position)
+        self.canvas.bind("<ButtonRelease-1>", self.save_ending_position)
 
         # Keep track of the drawing state, the starting point of the current line,
         # the previous point, and the size of the tool
@@ -122,12 +124,7 @@ class DrawingApp:
                     # Store segment info
                     self.current_segment.append(rect_id)
                     self.current_segment.append(reline_id)
-                elif self.current_tool == "square":
-                    # Draw a square
-                    square_id = self.canvas.create_rectangle(
-                        self.start_x, self.start_y, x, y, fill=self.color, outline="")
-                    # Store segment info
-                    self.current_segment.append(square_id)
+
                 elif self.current_tool == "triangle":
                     # Draw a triangle
                     triangle_id = self.canvas.create_polygon(
@@ -148,6 +145,21 @@ class DrawingApp:
         # Add the current segment to the segment history
         self.segment_history.append(tuple(self.current_segment))
         self.current_segment = []
+
+    def save_starting_position(self, event):
+        self.startx = event.x
+        self.starty = event.y
+
+    def save_ending_position(self, event):
+        self.endx = event.x
+        self.endy = event.y
+        if self.current_tool == "square":
+            square_id = self.canvas.create_rectangle(
+                self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+            # Store segment info
+            self.current_segment.append(square_id)
+        else:
+            pass
 
     def use_pencil(self):
         self.current_tool = "pencil"
