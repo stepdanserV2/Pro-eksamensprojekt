@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import colorchooser, filedialog
 from PIL import Image, ImageDraw, ImageTk
 
+
 class DrawingApp:
     def __init__(self, root):
         self.root = root
@@ -15,6 +16,8 @@ class DrawingApp:
         self.canvas.bind("<Button-1>", self.start_draw)
         self.canvas.bind("<B1-Motion>", self.draw)
         self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
+        self.canvas.bind("<Button-1>", self.save_starting_position)
+        self.canvas.bind("<ButtonRelease-1>", self.save_ending_position)
 
         # Keep track of the drawing state, the starting point of the current line,
         # the previous point, and the size of the tool
@@ -29,8 +32,18 @@ class DrawingApp:
         # History of drawn segments
         self.segment_history = []
         self.current_segment = []
-        
-        # Add buttons for changing tools, size and undo
+
+        # tvære variabler
+        self.smearing = False
+        self.smear_size = 10  # Default smear size
+        self.smear_color = "black"  # Default smear color
+
+        # Add buttons for changing tools, size, and undo
+        # Add buttons for changing tools
+        self.pencil_button = tk.Button(
+            root, text="Pencil", command=self.use_pencil)
+
+        # Add buttons for changing tools and size
         self.pencil_button = tk.Button(
             root, text="Pencil", command=self.use_pencil)
         self.pencil_button.pack(side=tk.LEFT)
@@ -75,6 +88,16 @@ class DrawingApp:
         # Set default tool
         self.current_tool = "pencil"
 
+
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_sheet)
+        self.clear_button.pack(side=tk.RIGHT)
+
+        self.smear_button = tk.Button(
+            root, text="tvære", command=self.start_smear)
+        self.smear_button.pack(side=tk.RIGHT)
+
+
         self.history = []
 
     def start_draw(self, event):
@@ -107,12 +130,7 @@ class DrawingApp:
                     # Store segment info
                     self.current_segment.append(rect_id)
                     self.current_segment.append(reline_id)
-                elif self.current_tool == "square":
-                    # Draw a square
-                    square_id = self.canvas.create_rectangle(
-                        self.start_x, self.start_y, x, y, fill=self.color, outline="")
-                    # Store segment info
-                    self.current_segment.append(square_id)
+
                 elif self.current_tool == "triangle":
                     # Draw a triangle
                     triangle_id = self.canvas.create_polygon(
@@ -133,13 +151,28 @@ class DrawingApp:
         # Add the current segment to the segment history
         self.segment_history.append(tuple(self.current_segment))
         self.current_segment = []
-          
+
+    def save_starting_position(self, event):
+        self.startx = event.x
+        self.starty = event.y
+
+    def save_ending_position(self, event):
+        self.endx = event.x
+        self.endy = event.y
+        if self.current_tool == "square":
+            square_id = self.canvas.create_rectangle(
+                self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+            # Store segment info
+            self.current_segment.append(square_id)
+        else:
+            pass
+
     def use_pencil(self):
         self.current_tool = "pencil"
 
     def use_eraser(self):
         self.current_tool = "eraser"
-    
+
     def use_square(self):
         self.current_tool = "square"
 
@@ -148,7 +181,7 @@ class DrawingApp:
 
     def change_size(self, size):
         self.size = int(size)
-    
+
     def choose_color(self):
         _, self.color = colorchooser.askcolor(title="Choose color")
 
@@ -159,21 +192,24 @@ class DrawingApp:
             image.thumbnail((100, 100))  # Resize the image as needed
             photo = ImageTk.PhotoImage(image)
             self.current_image = photo
-            self.current_image_id = self.canvas.create_image(200, 200, image=photo)
+            self.current_image_id = self.canvas.create_image(
+                200, 200, image=photo)
             self.canvas.image = photo  # Keep a reference to avoid garbage collection
-    
-    
+
     def start_move_image(self):
         self.current_tool = "none"
         if self.current_image_id:
-            self.canvas.tag_bind(self.current_image_id, "<Button-1>", self.move_start)
-            self.canvas.tag_bind(self.current_image_id, "<B1-Motion>", self.move)
-            self.canvas.tag_bind(self.current_image_id, "<ButtonRelease-1>", self.move_stop)
-    
+            self.canvas.tag_bind(self.current_image_id,
+                                 "<Button-1>", self.move_start)
+            self.canvas.tag_bind(self.current_image_id,
+                                 "<B1-Motion>", self.move)
+            self.canvas.tag_bind(self.current_image_id,
+                                 "<ButtonRelease-1>", self.move_stop)
+
     def move_start(self, event):
         self.start_x = event.x
         self.start_y = event.y
-    
+
     def move(self, event):
         if self.current_image_id:
             dx = event.x - self.start_x
@@ -181,23 +217,21 @@ class DrawingApp:
             self.canvas.move(self.current_image_id, dx, dy)
             self.start_x = event.x
             self.start_y = event.y
-    
+
     def move_stop(self, event):
         pass
-    
+
     def clear_sheet(self):
-        while(len(self.segment_history)>0):
+        while (len(self.segment_history) > 0):
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
-        
-    
+
     def undo(self):
         if self.segment_history:
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
-
 
 #ctrl z
 def ctrl_z_handler(e):
