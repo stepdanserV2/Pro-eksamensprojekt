@@ -252,8 +252,6 @@ class DrawingApp:
 
 
 # ctrl z
-
-
 def ctrl_z_handler(e):
     print("ctrl z", app.undo())
 
