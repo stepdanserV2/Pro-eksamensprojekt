@@ -160,6 +160,7 @@ class DrawingApp:
                 self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
             # Store segment info
             self.current_segment.append(square_id)
+            self.segment_history.append(tuple(self.current_segment))
 
         elif self.current_tool == "triangle":
             # Draw a triangle
@@ -167,11 +168,13 @@ class DrawingApp:
                 self.startx, self.starty, self.endx, self.endy, self.startx - (self.endx - self.startx), self.endy, fill=self.color, outline="")
             # Store segment info
             self.current_segment.append(triangle_id)
+            self.segment_history.append(tuple(self.current_segment))
 
         elif self.current_tool == "cirkel":
             cirkel_id = self.canvas.create_oval(
                 self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
             self.current_segment.append(cirkel_id)
+            self.segment_history.append(tuple(self.current_segment))
 
         else:
             pass
