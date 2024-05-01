@@ -73,6 +73,9 @@ class DrawingApp:
             root, text="Move Image", command=self.start_move_image)
         self.move_image_button.pack(side=tk.LEFT)
 
+        self.cirkel_button = tk.Button(
+            root, text="o", command=self.use_cirkle)
+        self.cirkel_button.pack(side=tk.LEFT)
         # Set default tool
         self.current_tool = "pencil"
 
@@ -157,12 +160,19 @@ class DrawingApp:
                 self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
             # Store segment info
             self.current_segment.append(square_id)
+
         elif self.current_tool == "triangle":
             # Draw a triangle
             triangle_id = self.canvas.create_polygon(
                 self.startx, self.starty, self.endx, self.endy, self.startx - (self.endx - self.startx), self.endy, fill=self.color, outline="")
             # Store segment info
             self.current_segment.append(triangle_id)
+
+        elif self.current_tool == "cirkel":
+            cirkel_id = self.canvas.create_oval(
+                self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+            self.current_segment.append(cirkel_id)
+
         else:
             pass
 
@@ -180,6 +190,10 @@ class DrawingApp:
 
     def use_triangle(self):
         self.current_tool = "triangle"
+        self.bind_mouse_events()
+
+    def use_cirkle(self):
+        self.current_tool = "cirkel"
         self.bind_mouse_events()
 
     def change_size(self, size):
@@ -235,6 +249,7 @@ class DrawingApp:
             last_segment = self.segment_history.pop()
             for item_id in last_segment:
                 self.canvas.delete(item_id)
+
 
 # ctrl z
 
