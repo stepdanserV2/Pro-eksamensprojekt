@@ -12,11 +12,6 @@ class DrawingApp:
         self.canvas = tk.Canvas(root, width=400, height=400, bg="white")
         self.canvas.pack(fill="both", expand=True)
 
-        # Bind mouse button events
-        self.canvas.bind("<Button-1>", self.start_draw)
-        self.canvas.bind("<B1-Motion>", self.draw)
-        self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
-
         # Keep track of the drawing state, the starting point of the current line,
         # the previous point, and the size of the tool
         self.drawing = False
@@ -30,11 +25,6 @@ class DrawingApp:
         # History of drawn segments
         self.segment_history = []
         self.current_segment = []
-
-        # tvære variabler
-        self.smearing = False
-        self.smear_size = 10  # Default smear size
-        self.smear_color = "black"  # Default smear color
 
         # Add buttons for changing tools, size, and undo
         # Add buttons for changing tools
@@ -63,9 +53,13 @@ class DrawingApp:
         self.size_button.pack(side=tk.LEFT)
         self.size_button.set(self.size)  # Set default size
 
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_sheet)
+        self.clear_button.pack(side=tk.RIGHT)
+
         self.undo_button = tk.Button(
             root, text="Undo", command=self.undo)
-        self.undo_button.pack(side=tk.LEFT)
+        self.undo_button.pack(side=tk.RIGHT)
 
         self.color_button = tk.Button(
             root, text="Color", command=self.choose_color)
@@ -79,6 +73,9 @@ class DrawingApp:
             root, text="Move Image", command=self.start_move_image)
         self.move_image_button.pack(side=tk.LEFT)
 
+        self.cirkel_button = tk.Button(
+            root, text="o", command=self.use_cirkle)
+        self.cirkel_button.pack(side=tk.LEFT)
         # Set default tool
         self.current_tool = "pencil"
 
@@ -86,11 +83,25 @@ class DrawingApp:
             root, text="Clear", command=self.clear_sheet)
         self.clear_button.pack(side=tk.RIGHT)
 
+        """
         self.smear_button = tk.Button(
             root, text="tvære", command=self.start_smear)
         self.smear_button.pack(side=tk.RIGHT)
+        """
 
         self.history = []
+
+    def bind_mouse_events(self):
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<B1-Motion>")
+        self.canvas.unbind("<ButtonRelease-1>")
+        if self.current_tool in ["pencil", "eraser", "smear", "Image", "None"]:
+            self.canvas.bind("<Button-1>", self.start_draw)
+            self.canvas.bind("<B1-Motion>", self.draw)
+            self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
+        else:
+            self.canvas.bind("<Button-1>", self.save_starting_position)
+            self.canvas.bind("<ButtonRelease-1>", self.save_ending_position)
 
     def start_draw(self, event):
         # Update the starting point and set drawing state to True
@@ -122,18 +133,6 @@ class DrawingApp:
                     # Store segment info
                     self.current_segment.append(rect_id)
                     self.current_segment.append(reline_id)
-                elif self.current_tool == "square":
-                    # Draw a square
-                    square_id = self.canvas.create_rectangle(
-                        self.start_x, self.start_y, x, y, fill=self.color, outline="")
-                    # Store segment info
-                    self.current_segment.append(square_id)
-                elif self.current_tool == "triangle":
-                    # Draw a triangle
-                    triangle_id = self.canvas.create_polygon(
-                        self.start_x, self.start_y, x, y, self.start_x - (x - self.start_x), y, fill=self.color, outline="")
-                    # Store segment info
-                    self.current_segment.append(triangle_id)
                 elif self.current_tool == "none":
                     pass
             # Update the previous point
@@ -149,17 +148,56 @@ class DrawingApp:
         self.segment_history.append(tuple(self.current_segment))
         self.current_segment = []
 
+    def save_starting_position(self, event):
+        self.startx = event.x
+        self.starty = event.y
+
+    def save_ending_position(self, event):
+        self.endx = event.x
+        self.endy = event.y
+        if self.current_tool == "square":
+            square_id = self.canvas.create_rectangle(
+                self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+            # Store segment info
+            self.current_segment.append(square_id)
+            self.segment_history.append(tuple(self.current_segment))
+
+        elif self.current_tool == "triangle":
+            # Draw a triangle
+            triangle_id = self.canvas.create_polygon(
+                self.startx, self.starty, self.endx, self.endy, self.startx - (self.endx - self.startx), self.endy, fill=self.color, outline="")
+            # Store segment info
+            self.current_segment.append(triangle_id)
+            self.segment_history.append(tuple(self.current_segment))
+
+        elif self.current_tool == "cirkel":
+            cirkel_id = self.canvas.create_oval(
+                self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+            self.current_segment.append(cirkel_id)
+            self.segment_history.append(tuple(self.current_segment))
+
+        else:
+            pass
+
     def use_pencil(self):
         self.current_tool = "pencil"
+        self.bind_mouse_events()
 
     def use_eraser(self):
         self.current_tool = "eraser"
+        self.bind_mouse_events()
 
     def use_square(self):
         self.current_tool = "square"
+        self.bind_mouse_events()
 
     def use_triangle(self):
         self.current_tool = "triangle"
+        self.bind_mouse_events()
+
+    def use_cirkle(self):
+        self.current_tool = "cirkel"
+        self.bind_mouse_events()
 
     def change_size(self, size):
         self.size = int(size)
@@ -223,24 +261,12 @@ class DrawingApp:
             for item in last_action:
                 self.canvas.delete(item)
 
-    def start_smear(self):
-        # Set the current tool to smear
-        self.current_tool = "smear"
-        # Activate smearing mode
-        self.smearing = True
+# ctrl z
+    def ctrl_z_handler(e):
+        print("ctrl z", app.undo())
 
-    def smear(self, event):
-        # knap til tvære
-        self.canvas.bind("<B1-Motion>", self.smear)
 
-        if self.smearing:
-            x, y = event.x, event.y
-            # Create a circular region to smear the existing drawing
-            self.canvas.create_oval(
-                x - self.smear_size, y - self.smear_size, x +
-                self.smear_size, y + self.smear_size,
-                fill=self.smear_color, outline="", stipple="gray50")
-
+app = None
 
 #ctrl z
 def ctrl_z_handler(e):
