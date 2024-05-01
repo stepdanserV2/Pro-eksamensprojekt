@@ -12,13 +12,6 @@ class DrawingApp:
         self.canvas = tk.Canvas(root, width=400, height=400, bg="white")
         self.canvas.pack(fill="both", expand=True)
 
-        # Bind mouse button events
-        self.canvas.bind("<Button-1>", self.start_draw)
-        self.canvas.bind("<B1-Motion>", self.draw)
-        self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
-        self.canvas.bind("<Button-1>", self.save_starting_position)
-        self.canvas.bind("<ButtonRelease-1>", self.save_ending_position)
-
         # Keep track of the drawing state, the starting point of the current line,
         # the previous point, and the size of the tool
         self.drawing = False
@@ -90,6 +83,18 @@ class DrawingApp:
 
         self.history = []
 
+    def bind_mouse_events(self):
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind("<B1-Motion>")
+        self.canvas.unbind("<ButtonRelease-1>")
+        if self.current_tool in ["pencil", "eraser", "smear", "Image", "None"]:
+            self.canvas.bind("<Button-1>", self.start_draw)
+            self.canvas.bind("<B1-Motion>", self.draw)
+            self.canvas.bind("<ButtonRelease-1>", self.stop_draw)
+        else:
+            self.canvas.bind("<Button-1>", self.save_starting_position)
+            self.canvas.bind("<ButtonRelease-1>", self.save_ending_position)
+
     def start_draw(self, event):
         # Update the starting point and set drawing state to True
         self.start_x = event.x
@@ -159,15 +164,19 @@ class DrawingApp:
 
     def use_pencil(self):
         self.current_tool = "pencil"
+        self.bind_mouse_events()
 
     def use_eraser(self):
         self.current_tool = "eraser"
+        self.bind_mouse_events()
 
     def use_square(self):
         self.current_tool = "square"
+        self.bind_mouse_events()
 
     def use_triangle(self):
         self.current_tool = "triangle"
+        self.bind_mouse_events()
 
     def change_size(self, size):
         self.size = int(size)
