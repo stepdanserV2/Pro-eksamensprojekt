@@ -26,11 +26,6 @@ class DrawingApp:
         self.segment_history = []
         self.current_segment = []
 
-        # tvære variabler
-        self.smearing = False
-        self.smear_size = 10  # Default smear size
-        self.smear_color = "black"  # Default smear color
-
         # Add buttons for changing tools, size, and undo
         # Add buttons for changing tools
         self.pencil_button = tk.Button(
