@@ -28,8 +28,6 @@ class DrawingApp:
 
         # Add buttons for changing tools, size, and undo
         # Add buttons for changing tools
-        self.pencil_button = tk.Button(
-            root, text="Pencil", command=self.use_pencil)
 
         # Add buttons for changing tools and size
         self.pencil_button = tk.Button(
@@ -78,10 +76,6 @@ class DrawingApp:
         self.cirkel_button.pack(side=tk.LEFT)
         # Set default tool
         self.current_tool = "pencil"
-
-        self.clear_button = tk.Button(
-            root, text="Clear", command=self.clear_sheet)
-        self.clear_button.pack(side=tk.RIGHT)
 
         """
         self.smear_button = tk.Button(
@@ -161,6 +155,7 @@ class DrawingApp:
             # Store segment info
             self.current_segment.append(square_id)
             self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
 
         elif self.current_tool == "triangle":
             # Draw a triangle
@@ -169,12 +164,14 @@ class DrawingApp:
             # Store segment info
             self.current_segment.append(triangle_id)
             self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
 
         elif self.current_tool == "cirkel":
             cirkel_id = self.canvas.create_oval(
                 self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
             self.current_segment.append(cirkel_id)
             self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
 
         else:
             pass
