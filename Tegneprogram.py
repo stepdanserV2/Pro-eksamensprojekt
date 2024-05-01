@@ -33,11 +33,6 @@ class DrawingApp:
         self.segment_history = []
         self.current_segment = []
 
-        # tvære variabler
-        self.smearing = False
-        self.smear_size = 10  # Default smear size
-        self.smear_color = "black"  # Default smear color
-
         # Add buttons for changing tools, size, and undo
         # Add buttons for changing tools
         self.pencil_button = tk.Button(
@@ -92,11 +87,6 @@ class DrawingApp:
         self.clear_button = tk.Button(
             root, text="Clear", command=self.clear_sheet)
         self.clear_button.pack(side=tk.RIGHT)
-
-        self.smear_button = tk.Button(
-            root, text="tvære", command=self.start_smear)
-        self.smear_button.pack(side=tk.RIGHT)
-
 
         self.history = []
 
