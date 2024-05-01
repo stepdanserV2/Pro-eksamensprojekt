@@ -58,9 +58,13 @@ class DrawingApp:
         self.size_button.pack(side=tk.LEFT)
         self.size_button.set(self.size)  # Set default size
 
+        self.clear_button = tk.Button(
+            root, text="Clear", command=self.clear_sheet)
+        self.clear_button.pack(side=tk.RIGHT)
+
         self.undo_button = tk.Button(
             root, text="Undo", command=self.undo)
-        self.undo_button.pack(side=tk.LEFT)
+        self.undo_button.pack(side=tk.RIGHT)
 
         self.color_button = tk.Button(
             root, text="Color", command=self.choose_color)
@@ -77,6 +81,7 @@ class DrawingApp:
         # Set default tool
         self.current_tool = "pencil"
 
+
         self.clear_button = tk.Button(
             root, text="Clear", command=self.clear_sheet)
         self.clear_button.pack(side=tk.RIGHT)
@@ -84,6 +89,7 @@ class DrawingApp:
         self.smear_button = tk.Button(
             root, text="tvære", command=self.start_smear)
         self.smear_button.pack(side=tk.RIGHT)
+
 
         self.history = []
 
@@ -236,32 +242,14 @@ class DrawingApp:
             for item_id in last_segment:
                 self.canvas.delete(item_id)
 
-    def clear_sheet(self):
-        if self.history:
-            last_action = self.history.pop()
-            for item in last_action:
-                self.canvas.delete(item)
+#ctrl z
+def ctrl_z_handler(e):
+    print("ctrl z", app.undo())
 
-    def start_smear(self):
-        # Set the current tool to smear
-        self.current_tool = "smear"
-        # Activate smearing mode
-        self.smearing = True
-
-    def smear(self, event):
-        # knap til tvære
-        self.canvas.bind("<B1-Motion>", self.smear)
-
-        if self.smearing:
-            x, y = event.x, event.y
-            # Create a circular region to smear the existing drawing
-            self.canvas.create_oval(
-                x - self.smear_size, y - self.smear_size, x +
-                self.smear_size, y + self.smear_size,
-                fill=self.smear_color, outline="", stipple="gray50")
-
+app = None
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = DrawingApp(root)
+    root.bind("<Control-z>",ctrl_z_handler)
     root.mainloop()
