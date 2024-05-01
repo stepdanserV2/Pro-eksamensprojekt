@@ -46,6 +46,10 @@ class DrawingApp:
             root, text="Triangle", command=self.use_triangle)
         self.triangle_button.pack(side=tk.LEFT)
 
+        self.cirkel_button = tk.Button(
+            root, text="Circle", command=self.use_cirkle)
+        self.cirkel_button.pack(side=tk.LEFT)
+
         self.size_button = tk.Scale(
             root, from_=1, to=10, orient=tk.HORIZONTAL, command=self.change_size)
         self.size_button.pack(side=tk.LEFT)
@@ -71,9 +75,8 @@ class DrawingApp:
             root, text="Move Image", command=self.start_move_image)
         self.move_image_button.pack(side=tk.LEFT)
 
-        self.cirkel_button = tk.Button(
-            root, text="o", command=self.use_cirkle)
-        self.cirkel_button.pack(side=tk.LEFT)
+        
+        
         # Set default tool
         self.current_tool = "pencil"
 
