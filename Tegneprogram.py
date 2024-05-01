@@ -28,8 +28,6 @@ class DrawingApp:
 
         # Add buttons for changing tools, size, and undo
         # Add buttons for changing tools
-        self.pencil_button = tk.Button(
-            root, text="Pencil", command=self.use_pencil)
 
         # Add buttons for changing tools and size
         self.pencil_button = tk.Button(
@@ -47,6 +45,10 @@ class DrawingApp:
         self.triangle_button = tk.Button(
             root, text="Triangle", command=self.use_triangle)
         self.triangle_button.pack(side=tk.LEFT)
+
+        self.cirkel_button = tk.Button(
+            root, text="Circle", command=self.use_cirkle)
+        self.cirkel_button.pack(side=tk.LEFT)
 
         self.size_button = tk.Scale(
             root, from_=1, to=10, orient=tk.HORIZONTAL, command=self.change_size)
@@ -73,15 +75,10 @@ class DrawingApp:
             root, text="Move Image", command=self.start_move_image)
         self.move_image_button.pack(side=tk.LEFT)
 
-        self.cirkel_button = tk.Button(
-            root, text="o", command=self.use_cirkle)
-        self.cirkel_button.pack(side=tk.LEFT)
+        
+        
         # Set default tool
         self.current_tool = "pencil"
-
-        self.clear_button = tk.Button(
-            root, text="Clear", command=self.clear_sheet)
-        self.clear_button.pack(side=tk.RIGHT)
 
         """
         self.smear_button = tk.Button(
@@ -161,6 +158,7 @@ class DrawingApp:
             # Store segment info
             self.current_segment.append(square_id)
             self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
 
         elif self.current_tool == "triangle":
             # Draw a triangle
@@ -169,12 +167,14 @@ class DrawingApp:
             # Store segment info
             self.current_segment.append(triangle_id)
             self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
 
         elif self.current_tool == "cirkel":
             cirkel_id = self.canvas.create_oval(
                 self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
             self.current_segment.append(cirkel_id)
             self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
 
         else:
             pass
