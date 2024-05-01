@@ -21,7 +21,7 @@ class DrawingApp:
         self.prev_y = None
         self.size = 2  # Default size
         self.color = "black"  # Default color
-
+        self.temp_shape = None
         # History of drawn segments
         self.segment_history = []
         self.current_segment = []
@@ -75,8 +75,6 @@ class DrawingApp:
             root, text="Move Image", command=self.start_move_image)
         self.move_image_button.pack(side=tk.LEFT)
 
-        
-        
         # Set default tool
         self.current_tool = "pencil"
 
@@ -179,6 +177,54 @@ class DrawingApp:
         else:
             pass
 
+    def outline(self):
+        self.canvas.bind("<B1-Motion>", self.show_outline)
+        self.canvas.bind("<ButtonRelease-1>", self.hide_outline)
+
+    def show_outline(self, event):
+        self.endx = event.x
+        self.endy = event.y
+        if self.current_tool in ["square", "triangle", "cirkel"]:
+            # Delete previous outline if it exists
+            if hasattr(self, "outline_shape"):
+                self.canvas.delete(self.outline_shape)
+            # Draw outline shape based on current tool
+            if self.current_tool == "square":
+                self.outline_shape = self.canvas.create_rectangle(
+                    self.startx, self.starty, self.endx, self.endy, outline="black", dash=(4, 4))
+            elif self.current_tool == "triangle":
+                # Calculate the third point for triangle
+                third_x = self.startx - (self.endx - self.startx)
+                third_y = self.endy
+                self.outline_shape = self.canvas.create_polygon(
+                    self.startx, self.starty, self.endx, self.endy, third_x, third_y, fill="white", outline="black", dash=(4, 4))
+            elif self.current_tool == "cirkel":
+                self.outline_shape = self.canvas.create_oval(
+                    self.startx, self.starty, self.endx, self.endy, outline="black", dash=(4, 4))
+
+    def hide_outline(self, event):
+        if hasattr(self, "outline_shape"):
+            self.canvas.delete(self.outline_shape)
+            # Draw the actual shape based on the outline
+            if self.current_tool == "square":
+                square_id = self.canvas.create_rectangle(
+                    self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+                self.current_segment.append(square_id)
+            elif self.current_tool == "triangle":
+                # Calculate the third point for triangle
+                third_x = self.startx - (self.endx - self.startx)
+                third_y = self.endy
+                triangle_id = self.canvas.create_polygon(
+                    self.startx, self.starty, self.endx, self.endy, third_x, third_y, fill=self.color, outline="")
+                self.current_segment.append(triangle_id)
+            elif self.current_tool == "cirkel":
+                cirkel_id = self.canvas.create_oval(
+                    self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
+                self.current_segment.append(cirkel_id)
+            # Store segment info
+            self.segment_history.append(tuple(self.current_segment))
+            self.current_segment = []
+
     def use_pencil(self):
         self.current_tool = "pencil"
         self.bind_mouse_events()
@@ -190,14 +236,17 @@ class DrawingApp:
     def use_square(self):
         self.current_tool = "square"
         self.bind_mouse_events()
+        self.outline()
 
     def use_triangle(self):
         self.current_tool = "triangle"
         self.bind_mouse_events()
+        self.outline()
 
     def use_cirkle(self):
         self.current_tool = "cirkel"
         self.bind_mouse_events()
+        self.outline()
 
     def change_size(self, size):
         self.size = int(size)
