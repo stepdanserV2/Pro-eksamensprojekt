@@ -81,15 +81,15 @@ class DrawingApp:
         # Set default tool
         self.current_tool = "pencil"
 
-
         self.clear_button = tk.Button(
             root, text="Clear", command=self.clear_sheet)
         self.clear_button.pack(side=tk.RIGHT)
 
+        """
         self.smear_button = tk.Button(
             root, text="tvære", command=self.start_smear)
         self.smear_button.pack(side=tk.RIGHT)
-
+        """
 
         self.history = []
 
@@ -135,13 +135,6 @@ class DrawingApp:
                     # Store segment info
                     self.current_segment.append(rect_id)
                     self.current_segment.append(reline_id)
-
-                elif self.current_tool == "triangle":
-                    # Draw a triangle
-                    triangle_id = self.canvas.create_polygon(
-                        self.start_x, self.start_y, x, y, self.start_x - (x - self.start_x), y, fill=self.color, outline="")
-                    # Store segment info
-                    self.current_segment.append(triangle_id)
                 elif self.current_tool == "none":
                     pass
             # Update the previous point
@@ -169,6 +162,12 @@ class DrawingApp:
                 self.startx, self.starty, self.endx, self.endy, fill=self.color, outline="")
             # Store segment info
             self.current_segment.append(square_id)
+        elif self.current_tool == "triangle":
+            # Draw a triangle
+            triangle_id = self.canvas.create_polygon(
+                self.startx, self.starty, self.endx, self.endy, self.startx - (self.endx - self.startx), self.endy, fill=self.color, outline="")
+            # Store segment info
+            self.current_segment.append(triangle_id)
         else:
             pass
 
@@ -242,14 +241,17 @@ class DrawingApp:
             for item_id in last_segment:
                 self.canvas.delete(item_id)
 
-#ctrl z
+# ctrl z
+
+
 def ctrl_z_handler(e):
     print("ctrl z", app.undo())
+
 
 app = None
 
 if __name__ == "__main__":
     root = tk.Tk()
     app = DrawingApp(root)
-    root.bind("<Control-z>",ctrl_z_handler)
+    root.bind("<Control-z>", ctrl_z_handler)
     root.mainloop()
